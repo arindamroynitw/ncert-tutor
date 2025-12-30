@@ -1,36 +1,115 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# NCERT Math Tutor - Production Application
+
+AI-powered conversational math tutor for NCERT Class 5 & 6 students using GPT-4o.
+
+## Project Status
+
+**Week 1 Day 1-2: Foundation Setup** ✅ COMPLETED
+
+- Next.js 14 project initialized with TypeScript, Tailwind CSS, App Router
+- Dependencies installed: @supabase/supabase-js, openai, zod, date-fns
+- Project structure created
+- TypeScript types defined (lib/types/index.ts)
+- Environment configuration ready
+- NCERT problem data copied (1,772 problems)
+
+**Week 1 Day 3-4: Database Setup** ✅ READY (awaiting your Supabase setup)
+
+- Database schema created (supabase/schema.sql)
+- CRUD helper functions implemented (lib/db/)
+- Migration script ready (scripts/migrate-problems.ts)
+- Setup instructions documented (supabase/SETUP.md)
+
+**Week 1 Day 5-7: Data Migration** ⏳ PENDING (will run after Supabase setup)
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 18+
+- OpenAI API key
+- Supabase account (for Week 1 Day 3-4)
+
+### Environment Setup
+
+1. Copy environment template:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.example .env.local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Fill in your credentials in `.env.local`:
+- `OPENAI_API_KEY`: Your OpenAI API key
+- Supabase credentials (to be added in Week 1 Day 3-4)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Install & Run
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm install
+npm run dev
+```
 
-## Learn More
+Open http://localhost:3000
 
-To learn more about Next.js, take a look at the following resources:
+## Project Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+/app
+  /api
+    /evaluate         # POST: Evaluate student answer
+    /generate-similar # POST: Generate mastery check problem
+    /diagnostic       # POST: Analyze misconceptions
+  /tutor/[problemId]  # Main tutoring interface
+  /summary/[sessionId] # Session summary for parents
+  /picker             # Problem picker interface
+/components
+  /chat               # Chat UI components
+  /summary            # Summary display components
+  /picker             # Problem picker components
+/lib
+  /db                 # Supabase client (supabase.ts)
+  /llm                # OpenAI wrapper (openai-client.ts)
+  /types              # TypeScript interfaces (index.ts)
+/data
+  /ncert              # all_problems.json (1,772 problems)
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Development Plan
 
-## Deploy on Vercel
+Following the 8-week plan in `/Users/arindamroy/coding/ai-math-helper/DEVELOPMENT_PLAN.md`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Next Steps (Week 1 Day 3-4):**
+- Create Supabase project
+- Design and deploy database schema
+- Set up CRUD helper functions
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Data
+
+- **Total Problems**: 1,772
+- **Classes**: 5 & 6
+- **Source**: NCERT PDFs extracted using GPT-4o Vision API
+- **Location**: `data/ncert/all_problems.json`
+
+## Technical Stack
+
+- **Framework**: Next.js 14 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **Database**: Supabase (PostgreSQL)
+- **LLM**: GPT-4o via OpenAI API
+- **Validation**: Zod
+
+## Design Principles (from Prototype)
+
+1. **Full Conversational LLM**: Send entire chat history to GPT-4o for contextual responses
+2. **Client-side Hint Counting**: Track hints on frontend to prevent LLM inconsistency
+3. **Never Give Solutions**: Strict prompting to prevent answer leakage
+4. **5 Response Types**: correct_final, partial_progress, arithmetic_error, conceptual_error, needs_hint
+5. **Visual Feedback**: 3 badge types (partial/green, hint/yellow, feedback/blue)
+6. **Mastery Check**: Generate similar problem after correct answer
+7. **Parent Summary**: Show conversation, hints used, problems mastered
+
+## Documentation
+
+- **Final Spec**: `/Users/arindamroy/coding/ai-math-helper/final_spec.md`
+- **Development Plan**: `/Users/arindamroy/coding/ai-math-helper/DEVELOPMENT_PLAN.md`
+- **Prototype**: `/Users/arindamroy/coding/ai-math-helper/prototype.html`
