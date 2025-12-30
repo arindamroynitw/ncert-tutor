@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { evaluateAnswer, getSolutionExplanation } from '@/lib/llm/evaluate';
 import { getProblemById } from '@/lib/db/problems';
-import { EvaluationRequest, EvaluationResponse, calculateAge } from '@/lib/types';
+import { EvaluationRequest, EvaluationResponse, Message, calculateAge } from '@/lib/types';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json() as {
       problem_id: string;
       student_answer: string;
-      conversation_history: Array<{ role: 'student' | 'tutor'; text: string }>;
+      conversation_history: Array<{ role: 'student' | 'tutor'; text: string; timestamp?: string }>;
       hints_used: number;
       request_solution?: boolean;
     };
@@ -59,10 +59,17 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    // Transform conversation history to include timestamps
+    const conversationHistory: Message[] = (body.conversation_history || []).map(msg => ({
+      role: msg.role,
+      text: msg.text,
+      timestamp: msg.timestamp || new Date().toISOString()
+    }));
+
     // Evaluate the answer with age-appropriate tone
     const evaluation: EvaluationResponse = await evaluateAnswer(
       problem,
-      body.conversation_history || [],
+      conversationHistory,
       body.student_answer,
       body.hints_used || 0,
       studentAge
