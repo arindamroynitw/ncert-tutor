@@ -199,15 +199,17 @@ export default function Home() {
                 <span className="px-3 py-1 bg-gray-100 text-gray-800 rounded-full">
                   Chapter {currentProblem.chapter}
                 </span>
-                <span className={`px-3 py-1 rounded-full font-medium ${
-                  currentProblem.complexity === 'easy'
-                    ? 'bg-green-100 text-green-800'
-                    : currentProblem.complexity === 'medium'
-                    ? 'bg-yellow-100 text-yellow-800'
-                    : 'bg-red-100 text-red-800'
-                }`}>
-                  {currentProblem.complexity?.charAt(0).toUpperCase() + currentProblem.complexity?.slice(1)}
-                </span>
+                {currentProblem.complexity && (
+                  <span className={`px-3 py-1 rounded-full font-medium ${
+                    currentProblem.complexity === 'easy'
+                      ? 'bg-green-100 text-green-800'
+                      : currentProblem.complexity === 'medium'
+                      ? 'bg-yellow-100 text-yellow-800'
+                      : 'bg-red-100 text-red-800'
+                  }`}>
+                    {currentProblem.complexity.charAt(0).toUpperCase() + currentProblem.complexity.slice(1)}
+                  </span>
+                )}
                 {currentProblem.requires_multi_step && (
                   <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full">
                     Multi-step

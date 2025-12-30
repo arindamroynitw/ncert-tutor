@@ -39,7 +39,8 @@ export default function TutorChat({ problemId, problemText, isMasteryCheck = fal
     const studentMessage: ChatMessage = {
       id: Date.now().toString(),
       role: 'student',
-      text: input.trim()
+      text: input.trim(),
+      timestamp: new Date().toISOString()
     };
 
     setMessages(prev => [...prev, studentMessage]);
@@ -68,6 +69,7 @@ export default function TutorChat({ problemId, problemText, isMasteryCheck = fal
         id: (Date.now() + 1).toString(),
         role: 'tutor',
         text: result.tutor_message,
+        timestamp: new Date().toISOString(),
         badge_type: result.badge_type
       };
 
@@ -98,7 +100,8 @@ export default function TutorChat({ problemId, problemText, isMasteryCheck = fal
       const errorMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'tutor',
-        text: 'Sorry, I had trouble understanding that. Could you try again?'
+        text: 'Sorry, I had trouble understanding that. Could you try again?',
+        timestamp: new Date().toISOString()
       };
       setMessages(prev => [...prev, errorMessage]);
     } finally {
@@ -127,7 +130,8 @@ export default function TutorChat({ problemId, problemText, isMasteryCheck = fal
       const solutionMessage: ChatMessage = {
         id: Date.now().toString(),
         role: 'tutor',
-        text: result.explanation || result.tutor_message
+        text: result.explanation || result.tutor_message,
+        timestamp: new Date().toISOString()
       };
 
       setMessages(prev => [...prev, solutionMessage]);

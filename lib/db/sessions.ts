@@ -213,7 +213,7 @@ export async function getSessionSummary(sessionId: string): Promise<SummaryData 
     problems_mastered,
     total_hints_used,
     average_hints_per_problem,
-    problem_details
+    problem_details: problemDetails
   };
 }
 
