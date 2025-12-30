@@ -84,7 +84,7 @@ export default function ProblemPicker({ onProblemSelected }: ProblemPickerProps)
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Which class are you in?
           </label>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <button
               onClick={() => setSelectedClass(5)}
               className={`py-3 px-4 rounded-lg font-medium transition-colors ${
@@ -104,6 +104,26 @@ export default function ProblemPicker({ onProblemSelected }: ProblemPickerProps)
               }`}
             >
               Class 6
+            </button>
+            <button
+              onClick={() => setSelectedClass(7)}
+              className={`py-3 px-4 rounded-lg font-medium transition-colors ${
+                selectedClass === 7
+                  ? 'bg-indigo-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              Class 7
+            </button>
+            <button
+              onClick={() => setSelectedClass(8)}
+              className={`py-3 px-4 rounded-lg font-medium transition-colors ${
+                selectedClass === 8
+                  ? 'bg-indigo-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              Class 8
             </button>
           </div>
         </div>
