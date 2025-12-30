@@ -99,33 +99,58 @@ async function migrateProblems() {
     process.exit(1);
   }
 
-  const rawData = JSON.parse(fs.readFileSync(dataPath, 'utf-8')) as RawBook[];
-  console.log(`✓ Loaded ${rawData.length} source books\n`);
+  const rawData = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
 
-  // Flatten all problems with metadata
-  const allProblems: Problem[] = [];
-  let counter = 1;
+  // Check if data is already flattened (array of problems) or old format (array of books)
+  const isFlattened = Array.isArray(rawData) && rawData.length > 0 && rawData[0].problem_text !== undefined;
 
-  for (const book of rawData) {
-    for (const chapter of book.chapters) {
-      for (const problem of chapter.problems) {
-        // Generate truly unique ID using counter
-        const uniqueId = `problem_${counter.toString().padStart(5, '0')}`;
-        counter++;
+  let allProblems: Problem[] = [];
 
-        const enrichedProblem: Problem = {
-          id: uniqueId,
-          source_book: book.book_id,
-          class: problem.class,
-          chapter: problem.chapter,
-          problem_number: parseInt(problem.problem_number) || 0,
-          text: problem.problem_text,
-          expected_answer: '', // Not available in this format
-          complexity: (problem.difficulty as 'easy' | 'medium' | 'hard') || estimateComplexity(problem.problem_text, ''),
-          requires_multi_step: requiresMultiStep(problem.problem_text)
-        };
+  if (isFlattened) {
+    console.log(`✓ Loaded ${rawData.length} problems (already flattened format)\n`);
 
-        allProblems.push(enrichedProblem);
+    // Data is already flattened, just need to transform to database format
+    let counter = 1;
+    allProblems = rawData.map((problem: any) => {
+      const uniqueId = `problem_${counter.toString().padStart(5, '0')}`;
+      counter++;
+      return {
+        id: uniqueId,
+        source_book: problem.book_id || 'unknown',
+        class: problem.class,
+        chapter: problem.chapter,
+        problem_number: parseInt(problem.problem_number) || 0,
+        text: problem.problem_text || problem.text,
+        expected_answer: '', // Not available in this format
+        complexity: (problem.difficulty as 'easy' | 'medium' | 'hard') || estimateComplexity(problem.problem_text || problem.text, ''),
+        requires_multi_step: requiresMultiStep(problem.problem_text || problem.text)
+      };
+    });
+  } else {
+    console.log(`✓ Loaded ${rawData.length} source books (old format)\n`);
+
+    // Old format: flatten all problems with metadata
+    let counter = 1;
+    for (const book of rawData as RawBook[]) {
+      for (const chapter of book.chapters) {
+        for (const problem of chapter.problems) {
+          const uniqueId = `problem_${counter.toString().padStart(5, '0')}`;
+          counter++;
+
+          const enrichedProblem: Problem = {
+            id: uniqueId,
+            source_book: book.book_id,
+            class: problem.class,
+            chapter: problem.chapter,
+            problem_number: parseInt(problem.problem_number) || 0,
+            text: problem.problem_text,
+            expected_answer: '', // Not available in this format
+            complexity: (problem.difficulty as 'easy' | 'medium' | 'hard') || estimateComplexity(problem.problem_text, ''),
+            requires_multi_step: requiresMultiStep(problem.problem_text)
+          };
+
+          allProblems.push(enrichedProblem);
+        }
       }
     }
   }
